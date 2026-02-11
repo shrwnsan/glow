@@ -449,6 +449,9 @@ func glamourRender(m pagerModel, markdown string) (string, error) {
 		markdown = utils.WrapCodeBlock(markdown, filepath.Ext(m.currentDocument.Note))
 	}
 
+	// Preprocess superscript/subscript HTML tags to Unicode
+	markdown = utils.ProcessSuperscript(markdown)
+
 	out, err := r.Render(markdown)
 	if err != nil {
 		return "", fmt.Errorf("error rendering markdown: %w", err)

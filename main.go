@@ -306,6 +306,9 @@ func executeCLI(cmd *cobra.Command, src *source, w io.Writer) error {
 		content = utils.WrapCodeBlock(string(b), ext)
 	}
 
+	// Preprocess superscript/subscript HTML tags to Unicode
+	content = utils.ProcessSuperscript(content)
+
 	out, err := r.Render(content)
 	if err != nil {
 		return fmt.Errorf("unable to render markdown: %w", err)

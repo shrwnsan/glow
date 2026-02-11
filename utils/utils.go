@@ -49,6 +49,89 @@ var markdownExtensions = []string{
 	".md", ".mdown", ".mkdn", ".mkd", ".markdown",
 }
 
+// Unicode superscript and subscript mappings
+var superscripts = map[rune]rune{
+	'0': '\u2070', // ⁰
+	'1': '\u00B9', // ¹
+	'2': '\u00B2', // ²
+	'3': '\u00B3', // ³
+	'4': '\u2074', // ⁴
+	'5': '\u2075', // ⁵
+	'6': '\u2076', // ⁶
+	'7': '\u2077', // ⁷
+	'8': '\u2078', // ⁸
+	'9': '\u2079', // ⁹
+	'+': '\u207A', // ⁺
+	'-': '\u207B', // ⁻
+	'=': '\u207C', // ⁼
+	'(': '\u207D', // ⁽
+	')': '\u207E', // ⁾
+	'n': '\u207F', // ⁿ
+}
+
+var subscripts = map[rune]rune{
+	'0': '\u2080', // ₀
+	'1': '\u2081', // ₁
+	'2': '\u2082', // ₂
+	'3': '\u2083', // ₃
+	'4': '\u2084', // ₄
+	'5': '\u2085', // ₅
+	'6': '\u2086', // ₆
+	'7': '\u2087', // ₇
+	'8': '\u2088', // ₈
+	'9': '\u2089', // ₉
+	'+': '\u208A', // ₊
+	'-': '\u208B', // ₋
+	'=': '\u208C', // ₌
+	'(': '\u208D', // ₍
+	')': '\u208E', // ₎
+}
+
+var supPattern = regexp.MustCompile(`<sup[^>]*>([^<]*)</sup>`)
+var subPattern = regexp.MustCompile(`<sub[^>]*>([^<]*)</sub>`)
+
+// ProcessSuperscript converts <sup> and <sub> HTML tags to Unicode characters.
+// This works around Glamour's HTML sanitization which strips these tags.
+func ProcessSuperscript(markdown string) string {
+	// Process superscript tags
+	markdown = supPattern.ReplaceAllStringFunc(markdown, func(match string) string {
+		// Extract content between tags
+		content := supPattern.FindStringSubmatch(match)
+		if len(content) < 2 {
+			return match
+		}
+		// Convert each character to superscript
+		var result strings.Builder
+		for _, r := range content[1] {
+			if sup, ok := superscripts[r]; ok {
+				result.WriteRune(sup)
+			} else {
+				result.WriteRune(r)
+			}
+		}
+		return result.String()
+	})
+
+	// Process subscript tags
+	markdown = subPattern.ReplaceAllStringFunc(markdown, func(match string) string {
+		content := subPattern.FindStringSubmatch(match)
+		if len(content) < 2 {
+			return match
+		}
+		var result strings.Builder
+		for _, r := range content[1] {
+			if sub, ok := subscripts[r]; ok {
+				result.WriteRune(sub)
+			} else {
+				result.WriteRune(r)
+			}
+		}
+		return result.String()
+	})
+
+	return markdown
+}
+
 // IsMarkdownFile returns whether the filename has a markdown extension.
 func IsMarkdownFile(filename string) bool {
 	ext := filepath.Ext(filename)
@@ -71,16 +154,6 @@ func IsMarkdownFile(filename string) bool {
 
 // GlamourStyle returns a glamour.TermRendererOption based on the given style.
 func GlamourStyle(style string, isCode bool) glamour.TermRendererOption {
-	if !isCode {
-		if style == styles.AutoStyle {
-			return glamour.WithAutoStyle()
-		}
-		return glamour.WithStylePath(style)
-	}
-
-	// If we are rendering a pure code block, we need to modify the style to
-	// remove the indentation.
-
 	var styleConfig ansi.StyleConfig
 
 	switch style {
@@ -106,8 +179,12 @@ func GlamourStyle(style string, isCode bool) glamour.TermRendererOption {
 		return glamour.WithStylesFromJSONFile(style)
 	}
 
-	var margin uint
-	styleConfig.CodeBlock.Margin = &margin
+	// If we are rendering a pure code block, we need to modify the style to
+	// remove the indentation.
+	if isCode {
+		var margin uint
+		styleConfig.CodeBlock.Margin = &margin
+	}
 
 	return glamour.WithStyles(styleConfig)
 }

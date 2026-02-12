@@ -221,6 +221,17 @@ See [contributing][contribute].
 
 [contribute]: https://github.com/charmbracelet/glow/contribute
 
+## Features
+
+Glow renders markdown with beautiful styling and powerful features:
+
+- **Superscript & Subscript**: Render mathematical expressions and chemical formulas
+  - Example: `E = mc²` (E = mc<sup>2</sup>)
+  - Example: `H₂O` (H<sub>2</sub>O)
+  - Example: `x² + y² = r²` (x<sup>2</sup> + y<sup>2</sup> = r<sup>2</sup>)
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes.
+
 ## Feedback
 
 We’d love to hear your thoughts on this project. Feel free to drop us a note!

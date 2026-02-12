@@ -1,0 +1,26 @@
+version: 2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - binary: glow
+    env:
+      - CGO_ENABLED=0
+    ldflags: -s -w -X main.Version={{.Version}} -X main.CommitSHA={{.Commit}} -X main.CommitDate={{.CommitDate}}
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{- if eq .Arch \"amd64\" }}x86_64{{ else }}{{ .Arch }}{{ end }}"
+    wrap_in_directory: true
+    files:
+      - README*
+      - LICENSE*
+      - completions/*
+      - manpages/*

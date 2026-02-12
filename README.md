@@ -120,6 +120,17 @@ go build
 
 [releases]: https://github.com/charmbracelet/glow/releases
 
+### Custom Fork (shrwnsan/glow)
+
+This fork includes custom features such as superscript/subscript rendering.
+Pre-built macOS binaries available via [Homebrew](https://github.com/shrwnsan/homebrew-tap):
+
+```bash
+brew tap shrwnsan/homebrew-tap && brew install glow
+```
+
+See [Releases](https://github.com/shrwnsan/glow/releases) for all binaries.
+
 ## The TUI
 
 Simply run `glow` without arguments to start the textual user interface and

@@ -1,4 +1,5 @@
 glow
+glow-test
 dist/
 .envrc
 completions/

@@ -24,3 +24,17 @@ archives:
       - LICENSE*
       - completions/*
       - manpages/*
+
+brews:
+  - name: glow
+    repository:
+      owner: shrwnsan
+      name: homebrew-tap
+    folder: Formula
+    homepage: https://github.com/shrwnsan/glow
+    description: Render markdown on the CLI, with pizzazz!
+    license: MIT
+    skip_upload: auto
+    commit_author:
+      name: goreleaser-bot
+      email: bot@goreleaser.com

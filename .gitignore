@@ -4,3 +4,10 @@ dist/
 .envrc
 completions/
 manpages/
+
+# Homebrew bottles
+*.bottle.json
+*.bottle.tar.gz
+
+# Local scripts
+scripts/clean.sh
